@@ -53,6 +53,17 @@ def send_otp(phone, otp):
   pass
   
  # use the functions in register view.
+ 
+ 
+   def check_otp_expiration(user):
+   """ if this function return False it means otp is expired."""
+  now = datetime.now()
+  otp_create_time = user.otp_created_time
+  diff_time = now - otp_create_time
+  if diff_time.seconds > 120 :
+    return False
+    
+  return True
 ```
 
 ### 5- verify user's phone :
