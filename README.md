@@ -19,6 +19,7 @@ class MobileBackend(ModelBackend):
 ```
 
 ### 2- edit model backend in django settings :
+settings.py
 ```
 
 AUTHENTICATION_BACKENDS = [
@@ -29,6 +30,7 @@ AUTHENTICATION_BACKENDS = [
 ```
 
 ### 3- in your custom user model you must put your project backend (MobileBackend) in a variable named backend .
+models.py
 ```
 class User(AbstractBaseUser):
   phone = models.CharField(max_length=11,unique=True)
@@ -38,4 +40,35 @@ class User(AbstractBaseUser):
   backend = 'your_app.project_backend.MobileBackend'
 ```
 
-### 4- 
+### 4- create and send otp code on user's phone :
+util.py
+```
+from random import randint
+
+def create_otp():
+  return randint(100000,999999)
+ 
+ 
+def send_otp(phone, otp):
+  pass
+  
+ # use the functions in register view.
+```
+
+### 5- verify user's phone :
+views.py
+```
+def verify_view(request):
+  user_phone = request.session.get('user_phone')
+  user = User.objects.get(phone=user_phone)
+  form = VerifyUserPhoneForm()
+  if request.method == 'POST':
+    if user.otp == form.cleaned_data.get('otp'):
+      user.is_active = True
+      user.save()
+      login(request,user)
+      redirect('home')
+  context = {'form' = form}
+  return render(request,template_name,context)
+
+```
